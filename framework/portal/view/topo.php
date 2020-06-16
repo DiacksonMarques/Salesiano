@@ -11,6 +11,12 @@ if (!isset($_SESSION['Usuid'])) {
   exit;
 }
 
+function multiexplode($delimiters, $string){
+  $ready = str_replace($delimiters, $delimiters[0], $string);
+  $launch = explode($delimiters[0], $ready);
+  return  $launch;
+}
+
 include_once '../../conexao.php';
 ?>
 
@@ -116,36 +122,27 @@ include_once '../../conexao.php';
                     <button class="btn btn-success btn-sm btn-circle"> <i class="fas fa-address-card"></i></button>
                   </form>
                 </div>
-
-                <div class="col-3 col-sm-3">
-                  <form action="jogos" method="POST">
-                    <input type="hidden" value="<?php echo $org['id']; ?>" name="id">
-                    <button class="btn btn-success btn-sm btn-circle"> <i class="fas fa-gamepad"></i></button>
-                  </form>
-                </div>
-              </div>
-              <?php } elseif ($botoes == 2) {
-              $verisala = $con->prepare("SELECT * FROM turma WHERE turma = '$turma'");
-              $verisala->execute();
-              while ($orgsala = $verisala->fetch(PDO::FETCH_ASSOC)) {
-              ?>
-                <div class="row">
-                  &nbsp;&nbsp;
+                <?php
+                $turmainf = $org['turma'];
+                $turmainf = multiexplode(array("A", "B", "C", "D", "E"), $turmainf);
+                $verij = $con->prepare("SELECT * FROM jogos WHERE turma = '$turmainf[0]'");
+                $verij->execute();
+                $numero_de_cadastroj = $verij->rowCount();
+                if ($numero_de_cadastroj > 0) {
+                ?>
                   <div class="col-3 col-sm-3">
-                    <form action="aulas" method="POST">
+                    <form action="jogos" method="POST">
                       <input type="hidden" value="<?php echo $org['id']; ?>" name="id">
-                      <button class="btn btn-success btn-sm btn-circle" id="aulasreloada"> <i class="fab fa-youtube"></i></button>
+                      <button class="btn btn-success btn-sm btn-circle"> <i class="fas fa-gamepad"></i></button>
                     </form>
                   </div>
-
-                  <div class="col-3 col-sm-3">
-                    <a class="btn btn-success btn-sm btn-circle" style="color:#fff" href="<?php echo $orgsala['link'] ?>" target="_blank"><i class="fab fa-slideshare"></i></a>
-                  </div>
-                </div>
-              <?php
-              }
-            } else {
-              ?>
+              </div>
+            <?php }
+              } elseif ($botoes == 2) {
+                $verisala = $con->prepare("SELECT * FROM turma WHERE turma = '$turma'");
+                $verisala->execute();
+                while ($orgsala = $verisala->fetch(PDO::FETCH_ASSOC)) {
+            ?>
               <div class="row">
                 &nbsp;&nbsp;
                 <div class="col-3 col-sm-3">
@@ -156,14 +153,31 @@ include_once '../../conexao.php';
                 </div>
 
                 <div class="col-3 col-sm-3">
-                  <form action="padlet" method="POST">
-                    <input type="hidden" value="<?php echo $org['id']; ?>" name="id">
-                    <button class="btn btn-success btn-sm btn-circle"> <i class="fas fa-address-card"></i></button>
-                  </form>
+                  <a class="btn btn-success btn-sm btn-circle" style="color:#fff" href="<?php echo $orgsala['link'] ?>" target="_blank"><i class="fab fa-slideshare"></i></a>
                 </div>
               </div>
             <?php
-            } ?>
+                }
+              } else {
+            ?>
+            <div class="row">
+              &nbsp;&nbsp;
+              <div class="col-3 col-sm-3">
+                <form action="aulas" method="POST">
+                  <input type="hidden" value="<?php echo $org['id']; ?>" name="id">
+                  <button class="btn btn-success btn-sm btn-circle" id="aulasreloada"> <i class="fab fa-youtube"></i></button>
+                </form>
+              </div>
+
+              <div class="col-3 col-sm-3">
+                <form action="padlet" method="POST">
+                  <input type="hidden" value="<?php echo $org['id']; ?>" name="id">
+                  <button class="btn btn-success btn-sm btn-circle"> <i class="fas fa-address-card"></i></button>
+                </form>
+              </div>
+            </div>
+          <?php
+              } ?>
           </li>
           <!--Divider -->
           <hr class="sidebar-divider d-none d-md-block">

@@ -15,7 +15,8 @@ include_once 'topo.php';
             <div class="row row-cols-1 row-cols-md-3">
                 <?php
                 $turma = $org['turma'];
-                $verit = $con->prepare("SELECT * FROM jogos WHERE turma = '$turma'");
+                $turma =  multiexplode(array("A", "B", "C", "D", "E"), $turma);
+                $verit = $con->prepare("SELECT * FROM jogos WHERE turma = '$turma[0]'");
                 $verit->execute();
                 while ($orgt = $verit->fetch(PDO::FETCH_ASSOC)) {
                 ?>
@@ -32,7 +33,7 @@ include_once 'topo.php';
             </div>
         </div>
     <?php } ?>
-<!-- /.container-fluid -->
+    <!-- /.container-fluid -->
 </div>
 <!-- End of Main Content -->
 <?php
